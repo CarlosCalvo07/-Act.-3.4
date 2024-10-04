@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+            font-size: 2.5em;
+        }
+
+        #code-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 45%;
+            height: 600px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            color: #495057;
+            background-color: #e9ecef;
+        }
+
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            background-color: #f1f3f5;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .clear-button {
+            background-color: #6c757d;
+        }
+
+        .clear-button:hover {
+            background-color: #5a6268;
+        }
+
+        #errors-container {
+            margin-top: 20px;
+            color: red;
+        }
+
+        #contador-tokens {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Analizador</h1>
+        <div id="code-container">
+            <div>
+                <textarea name="code" id="code-input" form="analyze-form">{{ code if code else '' }}</textarea>
+            </div>
+            <div id="token-table">
+                <table>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Token</th>
+                        <th>Palabra Reservada</th>
+                        <th>Identificador</th>
+                        <th>Variable</th>
+                        <th>Número</th>
+                        <th>Cadena</th>
+                        <th>Símbolo</th>
+                        <th>Tipo</th>
+                    </tr>
+                    {% if tokens %}
+                        {% for token in tokens %}
+                        <tr>
+                            <td>{{ token.line }}</td>
+                            <td>{{ token.token }}</td>
+                            <td>{{ token.palabra_reservada }}</td>
+                            <td>{{ token.identificador }}</td>
+                            <td>{{ token.variable }}</td>
+                            <td>{{ token.numero }}</td>
+                            <td>{{ token.cadena }}</td>
+                            <td>{{ token.simbolo }}</td>
+                            <td>{{ token.tipo }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <form id="analyze-form" action="/analyze" method="POST">
+                <button type="submit">Análisis Léxico</button>
+            </form>
+            <!-- Botón de borrar que reinicia el programa -->
+            <form action="/reset" method="POST">
+                <button class="clear-button" type="submit">Borrar</button>
+            </form>
+        </div>
+
+        <div id="errors-container">
+            {% if errors %}
+                <h2>Errores encontrados</h2>
+                <ul>
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div id="contador-tokens">
+            <h2>Contador de Tokens</h2>
+            <table>
+                <tr>
+                    <th>Palabra Reservada</th>
+                    <th>Identificador</th>
+                    <th>Variable</th>
+                    <th>Número</th>
+                    <th>Cadena</th>
+                    <th>Símbolo</th>
+                </tr>
+                <tr>
+                    <td>{{ token_count['Palabra Reservada'] }}</td>
+                    <td>{{ token_count['Identificador'] }}</td>
+                    <td>{{ token_count['Variable'] }}</td>
+                    <td>{{ token_count['Número'] }}</td>
+                    <td>{{ token_count['Cadena'] }}</td>
+                    <td>{{ token_count['Símbolo'] }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
